@@ -3,7 +3,7 @@
 const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost:27017/TaskManager', {useNewUrlParser: true, useUnifiedTopology: true}).then(() => {
+mongoose.connect('mongodb+srv://270254371:UuscK2j77EZuZ7WP@taskmanager.dlgzrmk.mongodb.net/TaskManagerDB?retryWrites=true&w=majority&appName=TaskManager', {useNewUrlParser: true, useUnifiedTopology: true}).then(() => {
     console.log("connected to MongoDB successfull!!!!");
 }).catch((e) => {
     console.log("Error connecting to MongoDB");
@@ -17,3 +17,4 @@ mongoose.connect('mongodb://localhost:27017/TaskManager', {useNewUrlParser: true
 module.exports = {
     mongoose
 }
+
