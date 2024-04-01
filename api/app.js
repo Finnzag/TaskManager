@@ -6,7 +6,7 @@ const mongoose = require('./db/mongoose');
 const bodyParser = require('body-parser');
 
 // Load in mongoose modles
-const {List, Task} = require('./db/models');
+const {List, Task, User} = require('./db/models');
 
 // Load moddleware
 app.use(bodyParser.json());
@@ -104,6 +104,40 @@ app.delete('/lists/:listId/tasks/:taskId', (req, res) => {
         res.send(removedTaskDoc);
     })
 });
+
+// API calls for users
+app.post('/users', (req, res) => {
+    // user sign up
+
+    let body = req.body;
+    let newUser = new User(body);
+
+    newUser.save().then(() => {
+        return newUser.createSession();
+    }).then((refreshToken) => {
+        // session has been created successfully and the refresh token has been returned
+        // Now an access token can be generated for the user
+
+        return newUser.generateAccessAuthToken().then((accessToken) => {
+            // auth toke generated successfully. Now return an object containing the auth tokens
+            return {accessToken, refreshToken}
+        })
+    }).then((authToken) => {
+        // construct and the send the response to the user with their auth tokens in the header
+        res
+        .header('x-refresh-token', authTokens.refreshToken)
+        .header('x-access-token', authTokens.accessToken)
+        .send(newUser);
+    }).catch((e) => {
+        res.status(400).send(e);
+    })
+})
+
+app.post('/users/login', (req, res) => {
+    let email = req.body.email;
+    let password = req.body.password;
+
+})
 
 
 
