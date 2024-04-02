@@ -8,6 +8,8 @@ const bodyParser = require('body-parser');
 // Load in mongoose modles
 const {List, Task, User} = require('./db/models');
 
+/* MIDDLEWARE */
+
 // Load moddleware
 app.use(bodyParser.json());
 
@@ -19,6 +21,58 @@ app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, append,delete,entries,foreach,get,has,keys,set,values,Authorization");
     next();
   });
+
+  // Verify refresh token. THis will verify the session
+  let verifySession = (req, res, next) => {
+    // Get the refresh token from the request header
+    let refreshToken = req.header('x-refresh-token');
+    // get the _id from the request header 
+    let _id = req.header('_id');
+
+    User.findByIdAndToken(_id, refreshToken).then((user) => {
+        if (!user) {
+            // Not user found
+            return Promise.reject({
+                'error': 'User not found. Make sure that the token and user ID are correct'
+            })
+        }
+
+        // User has been found
+        // now we need to check if the refresh token has expired or not
+
+        req.user_id = user._id;
+        req.userObject = user;
+        req.refreshToken = refreshToken;
+        
+
+        // BY default the session will not be valid
+        let isSessionValid = false;
+
+        // Loop over the current sessions that the user has and find one that has the same refresh token
+        user.sessions.foreach((session) => {
+            if (session.token === refreshToken) {
+                // check if the session has expired
+                if (User.hasRefreshTokenExpired(session.expiresAt) === false) {
+                    // refresh token has not expired
+                    isSessionValid = true;
+                }
+            }
+        });
+
+        if (isSessionValid) {
+            // The session is valid. Call next to conitnue processing the request
+            next();
+        } else{
+            return Promise.reject({
+                'error': 'Refresh token has expired or the session is invalid'
+            })
+        }
+    }).catch((e) => {
+        res.status(401).send(e); // Error coming from here
+    })
+  }
+
+  /* END MIDDLEWARE */
 
 
 app.get('/lists', (req, res) => {
@@ -122,7 +176,7 @@ app.post('/users', (req, res) => {
             // auth toke generated successfully. Now return an object containing the auth tokens
             return {accessToken, refreshToken}
         })
-    }).then((authToken) => {
+    }).then((authTokens) => {
         // construct and the send the response to the user with their auth tokens in the header
         res
         .header('x-refresh-token', authTokens.refreshToken)
@@ -137,6 +191,36 @@ app.post('/users/login', (req, res) => {
     let email = req.body.email;
     let password = req.body.password;
 
+    User.findByCredentials(email, password).then((user) => {
+        return user.createSession().then((refreshToken) => {
+            // session created successfuly and the refresh token is returned
+            // now the access auth token is generated
+            return user.generateAccessAuthToken().then((accessToken) => {
+                // access auth token is generated successfully
+                // both the access token and the auth token get returned
+                return{accessToken, refreshToken}
+            }).then((authTokens) => {
+                // construct and the send the response to the user with their auth tokens in the header
+                res
+                    .header('x-refresh-token', authTokens.refreshToken)
+                    .header('x-access-token', authTokens.accessToken)
+                    .send(user);
+            }).catch((e) => {
+                res.status(400).send(e);
+            })
+        })
+    })
+
+})
+
+app.get("/users/me/access-token", verifySession, (req, res) => {
+    // we know that the user/caller is autheticated
+    // now we have access to the user ID and user object
+    req.userObject.generateAccessAuthToken().then((accessToken) => {
+        res.header('x-access-token', accessToken).send({ accessToken });
+    }).catch((e) => {
+        res.status(400).send(e);
+    });
 })
 
 
