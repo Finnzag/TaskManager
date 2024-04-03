@@ -29,6 +29,8 @@ app.use(function(req, res, next) {
     // get the _id from the request header 
     let _id = req.header('_id');
 
+    
+
     User.findByIdAndToken(_id, refreshToken).then((user) => {
         if (!user) {
             // Not user found
@@ -37,6 +39,8 @@ app.use(function(req, res, next) {
             })
         }
 
+        
+
         // User has been found
         // now we need to check if the refresh token has expired or not
 
@@ -44,12 +48,15 @@ app.use(function(req, res, next) {
         req.userObject = user;
         req.refreshToken = refreshToken;
         
+        
 
         // BY default the session will not be valid
         let isSessionValid = false;
 
+        //console.log("Refresh Token:", user.sessions);
+
         // Loop over the current sessions that the user has and find one that has the same refresh token
-        user.sessions.foreach((session) => {
+        user.sessions.forEach((session) => {
             if (session.token === refreshToken) {
                 // check if the session has expired
                 if (User.hasRefreshTokenExpired(session.expiresAt) === false) {
@@ -57,7 +64,9 @@ app.use(function(req, res, next) {
                     isSessionValid = true;
                 }
             }
-        });
+        })
+
+        
 
         if (isSessionValid) {
             // The session is valid. Call next to conitnue processing the request
