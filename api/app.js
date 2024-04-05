@@ -19,6 +19,12 @@ app.use(function(req, res, next) {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "GET, POST, HEAD, OPTIONS, PUT, PATCH, DELETE");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, append,delete,entries,foreach,get,has,keys,set,values,Authorization");
+
+    res.header(
+        "Access-Control-Expose-Headers",
+        "x-access-token, x-refresh-token"
+    );
+
     next();
   });
 
@@ -209,6 +215,8 @@ app.post('/users/login', (req, res) => {
                 // both the access token and the auth token get returned
                 return{accessToken, refreshToken}
             }).then((authTokens) => {
+                console.log(authTokens.refreshToken);
+                console.log(authTokens.accessToken);
                 // construct and the send the response to the user with their auth tokens in the header
                 res
                     .header('x-refresh-token', authTokens.refreshToken)
