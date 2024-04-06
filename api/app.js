@@ -8,6 +8,8 @@ const bodyParser = require('body-parser');
 // Load in mongoose modles
 const {List, Task, User} = require('./db/models');
 
+const jwt = require('jsonwebtoken');
+
 /* MIDDLEWARE */
 
 // Load moddleware
@@ -27,6 +29,24 @@ app.use(function(req, res, next) {
 
     next();
   });
+
+  // if the request has a valid JWT access token token
+  let authenticate = (req, res, next) => {
+      let token = req.header('x-access-token');
+
+      // verify JWT
+      jwt.verify(token, User.getJWTSecret(), (err, decoded) => {
+        if (err) {
+            // there was an error
+            // JWT is invalid so do not authenticate
+            res.status(401).send(err);
+        } else {
+            // JWT isvalid
+            req.user_id = decoded._id;
+            next();
+        }
+      });
+  }
 
   // Verify refresh token. THis will verify the session
   let verifySession = (req, res, next) => {
@@ -90,22 +110,25 @@ app.use(function(req, res, next) {
   /* END MIDDLEWARE */
 
 
-app.get('/lists', (req, res) => {
-    // return an array of lists in the DB
-    List.find().then((lists) => {
+app.get('/lists', authenticate, (req, res) => {
+    // return an array of lists in the DB that belong to the authenticated user
+    List.find({
+        _userId: req.user_id
+    }).then((lists) => {
         res.send(lists);
     }).catch((e) => {
         res.send(e);
-    })
+    });
 })
 
 
-app.post('/lists', (req, res) => {
+app.post('/lists', authenticate, (req, res) => {
     //Create a new list 
     let title = req.body.title;
 
     let newList = new List({
-        title
+        title,
+        _userId: req.user_id
     })
     newList.save().then((listDoc) => {
         // Full list document is returned
@@ -113,27 +136,31 @@ app.post('/lists', (req, res) => {
     })
 })
 
-app.patch('/lists/:id', (req, res) => {
+app.patch('/lists/:id', authenticate, (req, res) => {
     // Update a list with new values
-    List.findOneAndUpdate({_id: req.params.id}, {
+    List.findOneAndUpdate({_id: req.params.id, _userId: req.user_id}, {
         $set: req.body
     }).then(() => {
         res.send({message: 'Updated successfully'});
     })
 })
 
-app.delete('/lists/:id', (req, res) => {
+app.delete('/lists/:id', authenticate, (req, res) => {
     // delete the specifid list
     List.findOneAndDelete({
-        _id: req.params.id
+        _id: req.params.id,
+        _userId: req.user_id
     }).then((removeListDoc) =>{
         res.send(removeListDoc);
+
+        // Delete all tasks associated with the deleted list
+        deleteTasksFromList(removeListDoc.id);
     })
 })
 
 // API calls for tasks
 
-app.get('/lists/:listId/tasks', (req, res) => {
+app.get('/lists/:listId/tasks', authenticate, (req, res) => {
     // return all of the tasks that belong to a specific list
     Task.find({
         _listId: req.params.listId
@@ -142,36 +169,93 @@ app.get('/lists/:listId/tasks', (req, res) => {
     })
 });
 
-app.post('/lists/:listId/tasks', (req, res) => {
+app.post('/lists/:listId/tasks', authenticate, (req, res) => {
     // Create a new task in the specified list
-    let newTask = new Task({
-        title: req.body.title,
-        _listId: req.params.listId
-    });
-    newTask.save().then((newTaskDoc) => {
-        res.send(newTaskDoc);
-    });
+
+    List.findOne({
+        _id: req.params.listId,
+        _userId: req.user_id
+    }).then((list) => {
+        if (list) {
+            // list object is valid
+            // Currently autheticated user can create tasks
+            return true;
+        }
+
+        // else - the user object is undefined
+        return false;
+    }).then((canCreateTask) => {
+        if (canCreateTask) {
+            let newTask = new Task({
+                title: req.body.title,
+                _listId: req.params.listId
+            });
+            newTask.save().then((newTaskDoc) => {
+                res.send(newTaskDoc);
+            });
+        } else {
+            res.sendStatus(404);
+        }
+    })
 });
 
-app.patch('/lists/:listId/tasks/:taskId', (req, res) => {
+app.patch('/lists/:listId/tasks/:taskId', authenticate, (req, res) => {
     // Update an existing task
-    Task.findOneAndUpdate({
-        _id: req.params.taskId,
-        _listId: req.params.listId
-    }, {
-        $set: req.body
-    }).then(() => {
-        res.sendStatus(200);
+    List.findOne({
+        _id: req.params.listId,
+        _userId: req.user_id
+    }).then((list) => {
+        if (list) {
+            // list object is valid
+            // Currently autheticated user can update tasks within this list
+            return true;
+        }
+
+        // else - the user object is undefined
+        return false;
+    }).then((canUpdateTasks) => {
+        if (canUpdateTasks) {
+            // the currently authenticated user can update tasks
+            Task.findOneAndUpdate({
+                _id: req.params.taskId,
+                _listId: req.params.listId
+            }, {
+                $set: req.body
+            }).then(() => {
+                res.sendStatus(200);
+            })
+        } else {
+            res.sendStatus(404);
+        }
     })
 });
 
-app.delete('/lists/:listId/tasks/:taskId', (req, res) => {
-    Task.findOneAndDelete({
-        _id: req.params.taskId,
-        _listId: req.params.listId
-    }).then((removedTaskDoc) => {
-        res.send(removedTaskDoc);
-    })
+app.delete('/lists/:listId/tasks/:taskId', authenticate, (req, res) => {
+
+    List.findOne({
+        _id: req.params.listId,
+        _userId: req.user_id
+    }).then((list) => {
+        if (list) {
+            // list object is valid
+            // Currently autheticated user can update tasks within this list
+            return true;
+        }
+
+        // else - the user object is undefined
+        return false;
+    }).then((canDeleteTasks) => {
+        if (canDeleteTasks) {
+            Task.findOneAndDelete({
+                _id: req.params.taskId,
+                _listId: req.params.listId
+            }).then((removedTaskDoc) => {
+                res.send(removedTaskDoc);
+            })
+        } else {
+            res.sendStatus(404);
+        }
+    });
 });
 
 // API calls for users
@@ -240,6 +324,16 @@ app.get("/users/me/access-token", verifySession, (req, res) => {
     });
 })
 
+
+
+/* HELPER METHODS */
+let deleteTasksFromList = (_listId) => {
+    Task.deleteMany({
+        _listId
+    }).then(() => {
+        console.log("Tasks from: " + _listId + " were deleted!");
+    })
+}
 
 
 app.listen(3000, () => {
