@@ -43,6 +43,17 @@ export class TaskService {
     })
   }
 
+  updateTask(taskId: string, listId: string, title: string) {
+    // send a web request to create a list
+    return this.webReqService.patch(`lists/${listId}/tasks/${taskId}`, {title});
+  }
+
+  deleteTask(listId: string, taskId: string) {
+    return this.webReqService.delete(`lists/${listId}/tasks/${taskId}`);
+  }
+
+
+
   
 
 }

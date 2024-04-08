@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { TaskService } from '../../task.service';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { task } from '../../models/task.model';
+import { list } from '../../models/list.model';
 
 @Component({
   selector: 'app-task-view',
@@ -10,8 +11,8 @@ import { task } from '../../models/task.model';
 })
 export class TaskViewComponent implements OnInit {
 
-  lists: any;
-  tasks: any;
+  lists: list[] = [];
+  tasks: task[] = [];
 
   selectedListId: string = "";
 
@@ -22,15 +23,15 @@ ngOnInit() {
   this.route.params.subscribe((params: Params) => {
     if (params?.['listId']) {
       this.selectedListId = params['listId'];
-      this.taskService.getTasks(params?.['listId']).subscribe((tasks:Object) => {
+      this.taskService.getTasks(params?.['listId']).subscribe((tasks:any) => {
         this.tasks = tasks;
       })
     } else {
-      this.tasks = undefined;
+      this.tasks = [];
     }
   })
 
-  this.taskService.getLists().subscribe((lists: Object) => {
+  this.taskService.getLists().subscribe((lists: any) => {
     this.lists = lists
   })
 
@@ -47,6 +48,13 @@ onTaskClick(task: any) {
 onDeleteListClicked() {
   this.taskService.deleteList(this.selectedListId).subscribe((res: any) => {
     this.router.navigate(['/lists']);
+    console.log(res);
+  })
+}
+
+onDeleteTaskClicked(id: string) {
+  this.taskService.deleteTask(this.selectedListId, id).subscribe((res: any) => {
+    this.tasks = this.tasks.filter(val => val._id !== id);
     console.log(res);
   })
 }
