@@ -299,8 +299,6 @@ app.post('/users/login', (req, res) => {
                 // both the access token and the auth token get returned
                 return{accessToken, refreshToken}
             }).then((authTokens) => {
-                console.log(authTokens.refreshToken);
-                console.log(authTokens.accessToken);
                 // construct and the send the response to the user with their auth tokens in the header
                 res
                     .header('x-refresh-token', authTokens.refreshToken)
