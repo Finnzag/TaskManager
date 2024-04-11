@@ -35,6 +35,7 @@
                         </div>
                         <div class="dropdown-menu" id="dropdown-menu4" role="menu">
                             <div class="dropdown-content">
+                                <a (click)="onLogoutClicked()" class="dropdown-item">Logout</a>
                                 <a [routerLink]="['/edit-list/', selectedListId]" class="dropdown-item"> Edit </a>
                                 <a (click)="onDeleteListClicked()" class="dropdown-item has-text-danger"> Delete </a>
                             </div>

@@ -59,4 +59,15 @@ onDeleteTaskClicked(id: string) {
   })
 }
 
+onLogoutClicked() {
+  // Delete access and refresh token stored in local storage
+  localStorage.removeItem('user-id');
+  localStorage.removeItem('x-access-token');
+  localStorage.removeItem('x-refresh-token');
+  
+  // Redirect to login page
+  this.router.navigate(['/login']);
+
+}
+
 }
