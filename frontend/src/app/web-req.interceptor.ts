@@ -39,6 +39,10 @@ export class WebReqInterceptor implements HttpInterceptor{
           )
         }
 
+        if (error.status === 404) {
+          alert("Username or password is incorrect");
+        }
+
         return throwError(() => (error));
       })
     )

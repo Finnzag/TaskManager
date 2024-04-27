@@ -308,6 +308,9 @@ app.post('/users/login', (req, res) => {
                 res.status(400).send(e);
             })
         })
+    }).catch((error) => {
+        console.log(error);
+        res.status(404).send(error);
     })
 
 })

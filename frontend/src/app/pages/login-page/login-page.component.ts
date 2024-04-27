@@ -19,6 +19,7 @@ export class LoginPageComponent {
         this.router.navigate(['/lists']);
       }
       console.log(res);
+      
     })
   }
 }
