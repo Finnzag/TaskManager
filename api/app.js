@@ -55,8 +55,6 @@ app.use(function(req, res, next) {
     // get the _id from the request header 
     let _id = req.header('_id');
 
-    
-
     User.findByIdAndToken(_id, refreshToken).then((user) => {
         if (!user) {
             // Not user found
@@ -65,17 +63,13 @@ app.use(function(req, res, next) {
             })
         }
 
-        
-
         // User has been found
         // now we need to check if the refresh token has expired or not
 
         req.user_id = user._id;
         req.userObject = user;
         req.refreshToken = refreshToken;
-        
-        
-
+    
         // BY default the session will not be valid
         let isSessionValid = false;
 
@@ -92,8 +86,6 @@ app.use(function(req, res, next) {
             }
         })
 
-        
-
         if (isSessionValid) {
             // The session is valid. Call next to conitnue processing the request
             next();
@@ -103,7 +95,7 @@ app.use(function(req, res, next) {
             })
         }
     }).catch((e) => {
-        res.status(401).send(e); // Error coming from here
+        res.status(401).send(e);
     })
   }
 

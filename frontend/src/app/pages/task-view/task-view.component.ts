@@ -26,6 +26,7 @@ ngOnInit() {
       this.taskService.getTasks(params?.['listId']).subscribe((tasks:any) => {
         this.tasks = tasks;
       })
+
     } else {
       this.tasks = [];
     }
@@ -33,6 +34,13 @@ ngOnInit() {
 
   this.taskService.getLists().subscribe((lists: any) => {
     this.lists = lists
+
+    // Checks to see if there are ant lists in the array. If no lists then the new task button will be disabled
+    if (this.lists.length === 0) {
+      (<HTMLInputElement> document.getElementById("newTaskButton")).disabled = true;
+    } else {
+      (<HTMLInputElement> document.getElementById("newTaskButton")).disabled = false;
+    }
   })
 
 }

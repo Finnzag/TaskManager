@@ -16,6 +16,7 @@ export class NewTaskComponent implements OnInit {
   listId!: string;
 
   ngOnInit() {
+    // Keeping track of the currtly selected list
     this.route.params.subscribe((params: Params) => {
       this.listId = params['listId'];
       })
