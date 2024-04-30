@@ -1,0 +1,17 @@
+<div class="centered-content">
+    <div class="modal-box">
+        <h1 class="title">
+            Edit Password
+        </h1>
+
+        <input #currentPasswordInput class="input has-background-light is-medium" type="text" placeholder="Enter current password....">
+        <input #newPasswordInput class="input has-background-light is-medium" type="text" placeholder="Enter new password....">
+        <br><br>
+        <div class="buttons is-right">
+          <button class="button is-medium" [routerLink]="['/lists']">Cancel</button>
+          <button class="button is-primary has-text-white is-medium" (click)="updatePassword(currentPasswordInput.value, newPasswordInput.value)">Save</button>
+        </div>
+
+        
+    </div>
+</div>

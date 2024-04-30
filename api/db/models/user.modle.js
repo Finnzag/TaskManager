@@ -121,6 +121,39 @@ UserSchema.statics.findByCredentials = function(email, password) {
     })
 }
 
+UserSchema.statics.updatePassword = function(_id, currentPassword, newPassword) {
+    let User = this;
+    let UpdatedPassword;
+
+    // Determines number of times that the encryption algorithm is run
+    let costFactor = 10;
+
+    return User.findOne({_id}).then((user) => {
+        bcrypt.compare(currentPassword, user.password, (err, res) => {
+            if (res) {
+                user.password = newPassword;
+                console.log(user.password);
+                bcrypt.genSalt(costFactor, (err, salt) => {
+                    bcrypt.hash(user.password, salt, (err, hash) => {
+                        UpdatedPassword = hash;
+                        User.findOneAndUpdate({
+                            _id
+                        }, { 
+                            $set: {password: UpdatedPassword} 
+                        }).then((UpdatedUser) => {
+                            console.log("password updated");
+                            console.log(UpdatedUser);
+                        })
+                        
+                    })
+                })
+            } else {
+                console.log("incorrect old password");
+            }
+        })
+    })
+}
+
 UserSchema.statics.hasRefreshTokenExpired = (expiresAt) => {
     let secondsSinceEpoch = Date.now() / 1000;
     if (expiresAt > secondsSinceEpoch) {
