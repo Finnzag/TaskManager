@@ -1,3 +1,4 @@
+const { text } = require('body-parser');
 const mongoose = require('mongoose');
 
 const TaskSchema = new mongoose.Schema({
@@ -14,6 +15,15 @@ const TaskSchema = new mongoose.Schema({
     completed: {
         type: Boolean,
         default: false
+    },
+    status: {
+        type: String,
+        required: true,
+        default: 'Todo'
+    },
+    notes: {
+        type: String,
+        default: ''
     }
 })
 

@@ -129,6 +129,7 @@ UserSchema.statics.updatePassword = function(_id, currentPassword, newPassword) 
     let costFactor = 10;
 
     return User.findOne({_id}).then((user) => {
+        console.log("Found");
         bcrypt.compare(currentPassword, user.password, (err, res) => {
             if (res) {
                 user.password = newPassword;
@@ -136,18 +137,21 @@ UserSchema.statics.updatePassword = function(_id, currentPassword, newPassword) 
                 bcrypt.genSalt(costFactor, (err, salt) => {
                     bcrypt.hash(user.password, salt, (err, hash) => {
                         UpdatedPassword = hash;
+                        
                         User.findOneAndUpdate({
                             _id
                         }, { 
                             $set: {password: UpdatedPassword} 
                         }).then((UpdatedUser) => {
                             console.log("password updated");
-                            console.log(UpdatedUser);
+                            console.log(UpdatedUser._id);
+                            return UpdatedUser._id;
                         })
                         
                     })
                 })
             } else {
+                console.log(user);
                 console.log("incorrect old password");
             }
         })

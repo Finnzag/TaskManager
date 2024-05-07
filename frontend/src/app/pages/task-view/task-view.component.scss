@@ -92,6 +92,11 @@
                 opacity: 1;
                 transform: scale(1);
             }
+
+            .statusButton {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
     }
@@ -100,6 +105,11 @@
         box-shadow: 0 0 0 5px #eeeeee;
 
         .task-buttons {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .statusButton {
             opacity: 1;
             transform: scale(1);
         }
@@ -136,4 +146,10 @@
     font-size: 20px;
     color: #7f7f7f;
     text-align: center;
+}
+
+.status-button {
+    transition: opacity 0.2s, transform 0.2s;
+    opacity: 1;
+    transform: scale(0.85);
 }

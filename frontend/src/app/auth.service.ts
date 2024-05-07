@@ -39,6 +39,10 @@ export class AuthService {
     this.router.navigateByUrl('/login');
   }
 
+  changePassword(userId: string, CurrentPassword: string, newPassword: string) {
+    return this.webservice.changePassword(userId, CurrentPassword, newPassword);
+  }
+
   getAccessToken() {
     return localStorage.getItem('x-access-token');
   }

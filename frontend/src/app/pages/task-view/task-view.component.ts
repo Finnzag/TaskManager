@@ -9,6 +9,7 @@ import { list } from '../../models/list.model';
   templateUrl: './task-view.component.html',
   styleUrl: './task-view.component.scss'
 })
+
 export class TaskViewComponent implements OnInit {
 
   lists: list[] = [];
@@ -76,6 +77,25 @@ onLogoutClicked() {
   // Redirect to login page
   this.router.navigate(['/login']);
 
+}
+
+onChangeStatusClicked(task: any, event:any, obj:any) {
+  event.stopPropagation();
+
+  let sButton = document.getElementsByClassName('status-button');
+
+  console.log(obj.status);
+  
+  if (obj.status == "Todo") {
+    obj.status = 'In Progress';
+  }else if (obj.status == "In Progress"){
+    obj.status = 'Completed';
+    task.completed = !task.completed;
+  }else{
+    obj.status = 'Todo';
+    task.completed = !task.completed;
+  }
+  
 }
 
 }

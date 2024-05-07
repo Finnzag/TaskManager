@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from '../../auth.service';
 
 @Component({
   selector: 'app-edit-user',
@@ -7,8 +9,16 @@ import { Component } from '@angular/core';
 })
 export class EditUserComponent {
 
-  updatePassword(CurrentPassword: string, newPassword: string) {
+  constructor(private route: ActivatedRoute, private authService: AuthService, private router: Router) {}
 
+  userId: any = this.authService.getUserId();
+
+
+  updatePassword(CurrentPassword: string, newPassword: string) {
+    
+    this.authService.changePassword(this.userId, CurrentPassword, newPassword).subscribe(() => {
+      console.log("Password Updated");
+    })
   }
 
 }

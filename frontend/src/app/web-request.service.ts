@@ -9,7 +9,7 @@ export class WebRequestService {
   readonly ROOT_URL;
 
   constructor(private http: HttpClient) { 
-    this.ROOT_URL = 'https://taskmanager-vv8z.onrender.com';
+    this.ROOT_URL = 'http://localhost:3000';
   }
 
   get(uri: string) {
@@ -21,7 +21,6 @@ export class WebRequestService {
   }
 
   patch(uri: string, payload: Object) {
-    console.log(payload);
     return this.http.patch(`${this.ROOT_URL}/${uri}`, payload, {responseType: 'text'});
   }
 
@@ -42,6 +41,16 @@ export class WebRequestService {
     return this.http.post(`${this.ROOT_URL}/users`, {
       email,
       password
+    }, {
+      observe: 'response'
+    });
+  }
+
+  changePassword(userId: string, CurrentPassword: string, newPassword: string) {
+    return this.http.patch(`${this.ROOT_URL}/users/me/change-password`, {
+      userId,
+      CurrentPassword,
+      newPassword
     }, {
       observe: 'response'
     });

@@ -52,6 +52,10 @@ export class TaskService {
     return this.webReqService.delete(`lists/${listId}/tasks/${taskId}`);
   }
 
+  updateStatus(task:any){
+
+  }
+
 
 
   
