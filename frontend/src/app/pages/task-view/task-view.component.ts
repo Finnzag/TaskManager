@@ -82,9 +82,6 @@ onLogoutClicked() {
 onChangeStatusClicked(task: any, event:any, obj:any) {
   event.stopPropagation();
 
-  let sButton = document.getElementsByClassName('status-button');
-
-  console.log(obj.status);
   
   if (obj.status == "Todo") {
     obj.status = 'In Progress';
@@ -96,6 +93,10 @@ onChangeStatusClicked(task: any, event:any, obj:any) {
     task.completed = !task.completed;
   }
   
+}
+
+saveTaskInfo(task: any){
+  localStorage.setItem('taskNotes', task.notes);
 }
 
 }

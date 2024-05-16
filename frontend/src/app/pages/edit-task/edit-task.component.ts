@@ -13,6 +13,7 @@ export class EditTaskComponent {
 
   taskId: string = "";
   listId: string = "";
+  taskNotes: string = "";
 
   ngOnInit() {
     this.route.params.subscribe(
@@ -21,10 +22,18 @@ export class EditTaskComponent {
         this.listId = params['listId'];
       }
     )
+
+    this.taskNotes = localStorage.getItem('taskNotes')!;
   }
 
   updateTask(title: string){
     this.taskService.updateTask(this.taskId, this.listId, title).subscribe(() => {
+      this.router.navigate(['/lists', this.listId]);
+    })
+  }
+
+  updateTaskNotes(notes: string){
+    this.taskService.updateTaskNotes(this.taskId, this.listId, notes).subscribe(() => {
       this.router.navigate(['/lists', this.listId]);
     })
   }

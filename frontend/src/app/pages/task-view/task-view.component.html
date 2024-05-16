@@ -56,7 +56,7 @@
 
                     <div class="task-buttons">
 
-                        <button class="button" [routerLink]="['/lists', selectedListId, 'edit-task', task._id]">
+                        <button class="button" (click)="saveTaskInfo(task)" [routerLink]="['/lists', selectedListId, 'edit-task', task._id]">
                             <div class="icon">
                                 <i class="fas fa-edit"></i>
                             </div>
