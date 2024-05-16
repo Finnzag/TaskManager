@@ -19,7 +19,7 @@ const TaskSchema = new mongoose.Schema({
     status: {
         type: String,
         required: true,
-        default: 'Todo'
+        default: 'Yet-to-do'
     },
     notes: {
         type: String,

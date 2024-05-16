@@ -83,14 +83,23 @@ onChangeStatusClicked(task: any, event:any, obj:any) {
   event.stopPropagation();
 
   
-  if (obj.status == "Todo") {
-    obj.status = 'In Progress';
-  }else if (obj.status == "In Progress"){
+  if (obj.status == "Yet-to-do") {
+    obj.status = 'On-going';
+    this.taskService.updateTaskStatus(obj._id, obj._listId, obj.status).subscribe(() => {
+      console.log("status updated");
+    })
+  }else if (obj.status == "On-going"){
     obj.status = 'Completed';
     task.completed = !task.completed;
+    this.taskService.updateTaskStatus(obj._id, obj._listId, obj.status).subscribe(() => {
+      console.log("status updated");
+    })
   }else{
-    obj.status = 'Todo';
+    obj.status = 'Yet-to-do';
     task.completed = !task.completed;
+    this.taskService.updateTaskStatus(obj._id, obj._listId, obj.status).subscribe(() => {
+      console.log("status updated");
+    })
   }
   
 }
