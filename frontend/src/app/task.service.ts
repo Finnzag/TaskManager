@@ -44,8 +44,20 @@ export class TaskService {
   }
 
   updateTask(taskId: string, listId: string, title: string) {
-    // send a web request to create a list
+    // send a web request to create update a task
     return this.webReqService.patch(`lists/${listId}/tasks/${taskId}`, {title});
+  }
+
+  updateTaskNotes(taskId: string, listId:string, notes: string){
+    return this.webReqService.patch(`lists/${listId}/tasks/${taskId}`, {notes});
+  }
+
+  updateTaskStatus(taskId: string, listId:string, status: string){
+    return this.webReqService.patch(`lists/${listId}/tasks/${taskId}`, {status});
+  }
+
+  updateTaskPriority(taskId: string, listId:string, priotity: string){
+    return this.webReqService.patch(`lists/${listId}/tasks/${taskId}`, {priotity});
   }
 
   deleteTask(listId: string, taskId: string) {

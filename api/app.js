@@ -317,6 +317,19 @@ app.get("/users/me/access-token", verifySession, (req, res) => {
     });
 })
 
+app.patch('/users/me/change-password', (req, res) => {
+    let body = req.body;
+    User.updatePassword(body._id, body.currentPassword, body.newPassword).then((outPut) =>{
+        console.log("2000000000", outPut);
+        res.sendStatus(400);
+        
+    }).catch((e) => {
+        res.sendStatus(400).send(e);
+    })
+
+    
+})
+
 
 
 /* HELPER METHODS */

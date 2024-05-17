@@ -9,6 +9,7 @@ import { list } from '../../models/list.model';
   templateUrl: './task-view.component.html',
   styleUrl: './task-view.component.scss'
 })
+
 export class TaskViewComponent implements OnInit {
 
   lists: list[] = [];
@@ -76,6 +77,56 @@ onLogoutClicked() {
   // Redirect to login page
   this.router.navigate(['/login']);
 
+}
+
+onChangeStatusClicked(task: any, event:any, obj:any) {
+  event.stopPropagation();
+
+  
+  if (obj.status == "Yet-to-do") {
+    obj.status = 'On-going';
+    this.taskService.updateTaskStatus(obj._id, obj._listId, obj.status).subscribe(() => {
+      console.log("status updated");
+    })
+  }else if (obj.status == "On-going"){
+    obj.status = 'Completed';
+    task.completed = !task.completed;
+    this.taskService.updateTaskStatus(obj._id, obj._listId, obj.status).subscribe(() => {
+      console.log("status updated");
+    })
+  }else{
+    obj.status = 'Yet-to-do';
+    task.completed = !task.completed;
+    this.taskService.updateTaskStatus(obj._id, obj._listId, obj.status).subscribe(() => {
+      console.log("status updated");
+    })
+  }
+  
+}
+
+onChangePriorityClicked(event:any, obj:any){
+  event.stopPropagation();
+
+  if (obj.priotity == "Low") {
+    obj.priotity = 'Medium';
+    this.taskService.updateTaskPriority(obj._id, obj._listId, obj.priotity).subscribe(() => {
+      console.log("prioity updated");
+    })
+  }else if (obj.priotity == "Medium"){
+    obj.priotity = 'High';
+    this.taskService.updateTaskPriority(obj._id, obj._listId, obj.priotity).subscribe(() => {
+      console.log("prioity updated");
+    })
+  }else{
+    obj.priotity = 'Low';
+    this.taskService.updateTaskPriority(obj._id, obj._listId, obj.priotity).subscribe(() => {
+      console.log("prioity updated");
+    })
+  }
+}
+
+saveTaskInfo(task: any){
+  localStorage.setItem('taskNotes', task.notes);
 }
 
 }

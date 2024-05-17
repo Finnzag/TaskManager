@@ -36,8 +36,8 @@
                         <div class="dropdown-menu" id="dropdown-menu4" role="menu">
                             <div class="dropdown-content">
                                 <a (click)="onLogoutClicked()" class="dropdown-item">Logout</a>
-                                <a [routerLink]="['/edit-list/', selectedListId]" class="dropdown-item"> Edit </a>
-                                <a (click)="onDeleteListClicked()" class="dropdown-item has-text-danger"> Delete </a>
+                                <a [routerLink]="['/edit-list/', selectedListId]" class="dropdown-item"> Edit  List </a>
+                                <a (click)="onDeleteListClicked()" class="dropdown-item has-text-danger"> Delete List </a>
                             </div>
                         </div>
                       </div>
@@ -47,9 +47,21 @@
                     <div class="task-text">
                         <p>{{task.title}}</p>
                     </div>
+
+                    <div class="statusButton">
+                        <button class="button status-button" id="statusButton" (click)="onChangeStatusClicked(task, $event, this.task)">
+                            {{task.status}}
+                         </button>
+
+                         <button class="button priority-button" id="priorityButton" (click)="onChangePriorityClicked($event, this.task)">
+                            {{task.priotity}}
+                         </button>
+                         
+                    </div>
+
                     <div class="task-buttons">
 
-                        <button class="button" [routerLink]="['/lists', selectedListId, 'edit-task', task._id]">
+                        <button class="button" (click)="saveTaskInfo(task)" [routerLink]="['/lists', selectedListId, 'edit-task', task._id]">
                             <div class="icon">
                                 <i class="fas fa-edit"></i>
                             </div>
