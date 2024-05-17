@@ -104,6 +104,27 @@ onChangeStatusClicked(task: any, event:any, obj:any) {
   
 }
 
+onChangePriorityClicked(event:any, obj:any){
+  event.stopPropagation();
+
+  if (obj.priotity == "Low") {
+    obj.priotity = 'Medium';
+    this.taskService.updateTaskPriority(obj._id, obj._listId, obj.priotity).subscribe(() => {
+      console.log("prioity updated");
+    })
+  }else if (obj.priotity == "Medium"){
+    obj.priotity = 'High';
+    this.taskService.updateTaskPriority(obj._id, obj._listId, obj.priotity).subscribe(() => {
+      console.log("prioity updated");
+    })
+  }else{
+    obj.priotity = 'Low';
+    this.taskService.updateTaskPriority(obj._id, obj._listId, obj.priotity).subscribe(() => {
+      console.log("prioity updated");
+    })
+  }
+}
+
 saveTaskInfo(task: any){
   localStorage.setItem('taskNotes', task.notes);
 }

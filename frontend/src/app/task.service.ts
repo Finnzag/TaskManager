@@ -56,12 +56,12 @@ export class TaskService {
     return this.webReqService.patch(`lists/${listId}/tasks/${taskId}`, {status});
   }
 
-  deleteTask(listId: string, taskId: string) {
-    return this.webReqService.delete(`lists/${listId}/tasks/${taskId}`);
+  updateTaskPriority(taskId: string, listId:string, priotity: string){
+    return this.webReqService.patch(`lists/${listId}/tasks/${taskId}`, {priotity});
   }
 
-  updateStatus(task:any){
-
+  deleteTask(listId: string, taskId: string) {
+    return this.webReqService.delete(`lists/${listId}/tasks/${taskId}`);
   }
 
 

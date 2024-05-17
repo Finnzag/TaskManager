@@ -24,6 +24,11 @@ const TaskSchema = new mongoose.Schema({
     notes: {
         type: String,
         default: ''
+    },
+    priotity: {
+        type: String,
+        required: true,
+        default: 'Low'
     }
 })
 

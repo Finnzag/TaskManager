@@ -52,6 +52,11 @@
                         <button class="button status-button" id="statusButton" (click)="onChangeStatusClicked(task, $event, this.task)">
                             {{task.status}}
                          </button>
+
+                         <button class="button priority-button" id="priorityButton" (click)="onChangePriorityClicked($event, this.task)">
+                            {{task.priotity}}
+                         </button>
+                         
                     </div>
 
                     <div class="task-buttons">

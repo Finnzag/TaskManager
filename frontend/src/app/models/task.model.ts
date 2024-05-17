@@ -5,4 +5,5 @@ export class task {
     completed!: boolean;
     status!: string;
     notes!: string;
+    priotity!: string;
 }
