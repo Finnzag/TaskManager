@@ -34,7 +34,7 @@ export class EditTaskComponent {
 
   updateTaskNotes(notes: string){
     this.taskService.updateTaskNotes(this.taskId, this.listId, notes).subscribe(() => {
-      this.router.navigate(['/lists', this.listId]);
+      //this.router.navigate(['/lists', this.listId]);
     })
   }
 }

@@ -43,11 +43,11 @@
                       </div>
                 </div>
                 
-                <div class="task" *ngFor="let task of tasks" (click)="onTaskClick(task)" [ngClass]="{ 'completed': task.completed }">
+                <div class="task" *ngFor="let task of tasks" (click)="onTaskClick(task)" [ngClass]="{ 'completed': task.completed}">
                     <div class="task-text">
                         <p>{{task.title}}</p>
                     </div>
-
+                    
                     <div class="statusButton">
                         <button class="button status-button" id="statusButton" (click)="onChangeStatusClicked(task, $event, this.task)">
                             {{task.status}}

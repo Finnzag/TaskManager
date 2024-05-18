@@ -26,6 +26,7 @@ ngOnInit() {
       this.selectedListId = params['listId'];
       this.taskService.getTasks(params?.['listId']).subscribe((tasks:any) => {
         this.tasks = tasks;
+        console.log(tasks);
       })
 
     } else {
@@ -47,11 +48,11 @@ ngOnInit() {
 }
 
 onTaskClick(task: any) {
-  this.taskService.complete(task).subscribe(() => {
-    console.log("completed successfully");
+  //this.taskService.complete(task).subscribe(() => {
+    //console.log("completed successfully");
     // Task has been set to completed 
-    task.completed = !task.completed;
-  })
+    //task.completed = !task.completed;
+  //})
 }
 
 onDeleteListClicked() {
@@ -85,18 +86,25 @@ onChangeStatusClicked(task: any, event:any, obj:any) {
   
   if (obj.status == "Yet-to-do") {
     obj.status = 'On-going';
+    this.taskService.complete(task).subscribe(() => {
+      task.completed = false;
+    })
     this.taskService.updateTaskStatus(obj._id, obj._listId, obj.status).subscribe(() => {
       console.log("status updated");
     })
   }else if (obj.status == "On-going"){
     obj.status = 'Completed';
-    task.completed = !task.completed;
+    this.taskService.complete(task).subscribe(() => {
+      task.completed = true;
+    })
     this.taskService.updateTaskStatus(obj._id, obj._listId, obj.status).subscribe(() => {
       console.log("status updated");
     })
   }else{
     obj.status = 'Yet-to-do';
-    task.completed = !task.completed;
+    this.taskService.complete(task).subscribe(() => {
+      task.completed = false;
+    })
     this.taskService.updateTaskStatus(obj._id, obj._listId, obj.status).subscribe(() => {
       console.log("status updated");
     })
